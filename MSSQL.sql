@@ -1,4 +1,4 @@
-Create Function getNextRunTimeFromCron(@lastRunTime datetime, @cronString  varchar(100))
+CREATE Function getNextRunTimeFromCron(@lastRunTime datetime, @cronString  varchar(100))
 returns datetime
 as
 Begin
@@ -41,9 +41,9 @@ Begin
 	(
 	   select idx, startRange data, endRange from rangedata 
 	   Union all 
-	   Select idx, data + case when charindex('/', endRange) != 0 then cast(substring(endRange, CHARINDEX('/', endrange) + 1, 1000) as int) else  1 end, endRange from rangedataExpanded where data < cast(case when charindex('/', endRange) != 0 then substring(endRange, 1, CHARINDEX('/', endrange) - 1) else endRange end  as int)
+	   Select idx, data + case when charindex('/', endRange) != 0 then cast(substring(endRange, CHARINDEX('/', endrange) + 1, 1000) as int) else  1 end, endRange from rangedataExpanded 
+			where data + case when charindex('/', endRange) != 0 then cast(substring(endRange, CHARINDEX('/', endrange) + 1, 1000) as int) else  1 end < cast(case when charindex('/', endRange) != 0 then substring(endRange, 1, CHARINDEX('/', endrange) - 1) else endRange end  as int)
 	) 
-	--select * from rangedataExpanded
 	, CoreTable1 as
 	(
 		Select idx, data from coreTable where data not like '%-%' Union
