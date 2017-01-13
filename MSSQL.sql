@@ -21,7 +21,7 @@ Begin
 	  Select 3 idx, 1 StartValue, 31 endValue Union all 
 	  Select 4 idx, 1 StartValue, 12 endValue Union all 
 	  Select 5 idx, 1 StartValue, 7 endValue Union all 
-	  Select 6 idx, year(@lastRunTime) StartValue,  year(@lastRunTime) + 100 endValue 
+	  Select 6 idx, year(@lastRunTime) StartValue,  year(@lastRunTime) + 5 endValue 
 	)
 	,CoreTable as
 	(
