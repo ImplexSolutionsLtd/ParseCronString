@@ -6,14 +6,25 @@ Begin
 	Declare @ValidDays Table(dt date Primary key, isValid bit default 0)
 	Declare @ValidHours Table (hr int, mins int)
 	Declare @dt dateTime
+	DECLARE @blankCnt int
 	;
-	 --select 1, 'Minute' Union all
-	 --select 2, 'Hour' Union all
-	 --select 3, 'DayOfMonth' Union all
-	 --select 4, 'MonthOfYear' Union all
-	 --select 5, 'DayOfWeek' Union all
-	 --select 6, 'Year' 
+	 
+	 WITH element AS (
+	 select 1 idx, 'Minute' elem Union all
+	 select 2, 'Hour' Union all
+	 select 3, 'DayOfMonth' Union all
+	 select 4, 'MonthOfYear' Union all
+	 select 5, 'DayOfWeek' Union all
+	 select 6, 'Year' 
+	 )
+	 select @blankCnt = count(1)  from dbo.fnSplitString(@cronString, ' ') fs
+		FULL JOIN element e ON fs.idx = e.idx
+	WHERE fs.splitdata IS NULL
 
+
+	IF (@blankCnt  != 0) RETURN '1900-01-01'
+
+	 ;
 	With ElementLimits as
 	(
 	  Select 1 idx, 0 StartValue, 59 endValue Union all 
