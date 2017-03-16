@@ -2,6 +2,7 @@ CREATE Function getNextRunTimeFromCron(@lastRunTime datetime, @cronString  varch
 returns datetime
 as
 Begin
+	--Declare @lastRunTime datetime = '2017-03-16 17:20:58.520', @cronString  varchar(100) = '10-/5 * * * * *'
 	Declare @CoreTable Table(Idx int, data int)
 	Declare @ValidDays Table(dt date Primary key, isValid bit default 0)
 	Declare @ValidHours Table (hr int, mins int)
@@ -63,10 +64,12 @@ Begin
 	--select * from CoreTable1
 	,EveryTable as 
 	(
-		select ct.idx, Substring(data, 3, 1000) data, el.StartValue, el.endValue from CoreTable1  ct
+		select ct.idx, Substring(data, CHARINDEX('/', data) + 1, 1000) data, case when Substring(data, 1, CHARINDEX('/', data))  NOT LIKE '%-%' OR  Substring(data, 1, CHARINDEX('/', data) - 1) != '*' then cast(Substring(data, 1, CHARINDEX('/', data) - 1) as int) else el.StartValue END StartValue, el.endValue from CoreTable1  ct
 			inner join ElementLimits el on ct.idx = el.idx
 		where data like '%/%'	
 	)
+	--SELECT * FROM EveryTable
+	
 	,EveryTableExpanded as
 	(
 		select idx, StartValue value, endValue, data increment from EveryTable 
@@ -75,6 +78,7 @@ Begin
 		where value + increment < endValue
 	)
 	--select * from EveryTableExpanded
+	
 	,CoreTable2 as
 	(
 	select idx, cast(value as varchar(100)) data from EveryTableExpanded
